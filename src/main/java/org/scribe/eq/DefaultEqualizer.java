@@ -15,6 +15,8 @@ limitations under the License.
 */
 package org.scribe.eq;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.regex.*;
 
 import org.scribe.http.*;
@@ -89,7 +91,13 @@ public class DefaultEqualizer {
   private Token parseTokens(String response){
     Matcher matcher = Pattern.compile(TOKEN_REGEX).matcher(response);
     if(matcher.matches()){
-      return new Token(matcher.group(1), matcher.group(2), response);
+    	try {
+			String token = URLDecoder.decode(matcher.group(1), "UTF-8");
+			String secret = URLDecoder.decode(matcher.group(2), "UTF-8");
+     return new Token(token,secret, response);
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException("The sky is falling!  The sky is falling!  Java doesn't support UTF-8 on this platform!");
+		}
     }else{
       throw new RuntimeException("Could not find request token or secret in response: " + response);
     }  

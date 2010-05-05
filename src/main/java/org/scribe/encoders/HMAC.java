@@ -19,6 +19,7 @@ import javax.crypto.*;
 import javax.crypto.spec.*;
 
 import org.apache.commons.codec.binary.*;
+import org.apache.log4j.Logger;
 
 /**
  * An utility class for HMAC-SHA1 signature methods.  
@@ -26,6 +27,7 @@ import org.apache.commons.codec.binary.*;
  * @author Pablo Fernandez
  */
 public class HMAC {
+  private static Logger log = Logger.getLogger(HMAC.class);
 
   private static final String UTF8 = "UTF-8";
   private static final String HMAC_SHA1 = "HmacSHA1";
@@ -47,10 +49,17 @@ public class HMAC {
   }
   
   private static String doSign(String toSign, String keyString) throws Exception{
-    SecretKeySpec key = new SecretKeySpec((keyString).getBytes(UTF8),HMAC_SHA1);
+	log.debug("Signing string [" + toSign + "]");
+	log.debug("With key [" + keyString + "]");
+    
+	SecretKeySpec key = new SecretKeySpec((keyString).getBytes(UTF8),HMAC_SHA1);
     Mac mac = Mac.getInstance(HMAC_SHA1);
     mac.init(key);
     byte[] bytes = mac.doFinal(toSign.getBytes(UTF8));
-    return new String(Base64.encodeBase64(bytes)).replace("\r\n", "");
+    String result = new String(Base64.encodeBase64(bytes)).replace("\r\n", "");
+    
+    log.debug("Signature [" + result + "]");
+    
+    return result;
   }
 }

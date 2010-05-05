@@ -37,4 +37,13 @@ public class DefaultEqualizerTest {
     Assert.assertEquals("a0637ba7-2e07-4be1-8fcc-87eee817350e", pair.getToken());
     Assert.assertEquals("eb88ed1e-ce87-4b69-9e62-6f57deca8105", pair.getSecret());
   }
+  
+  @Test
+  public void shouldDecodeEncodedTokens() {
+    String response = "oauth_token=4%2F8V0JMjg6jsneYyYp3SnfP-QK5eVU&oauth_token_secret=kdfs%2BJxyLFyeDKzsKep6EdCs";
+    Token pair = eq.parseAccessTokens(response);
+    Assert.assertEquals("4/8V0JMjg6jsneYyYp3SnfP-QK5eVU", pair.getToken());
+    Assert.assertEquals("kdfs+JxyLFyeDKzsKep6EdCs", pair.getSecret());
+    System.out.println(pair);
+  }
 }

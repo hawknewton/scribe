@@ -15,11 +15,12 @@ limitations under the License.
 */
 package org.scribe.oauth;
 
-import java.util.*;
+import java.util.Map;
 
-import org.scribe.encoders.*;
-import org.scribe.eq.*;
-import org.scribe.http.*;
+import org.scribe.encoders.HMAC;
+import org.scribe.encoders.URL;
+import org.scribe.eq.DefaultEqualizer;
+import org.scribe.http.Request;
 
 class OAuthSigner {
 
@@ -67,7 +68,7 @@ class OAuthSigner {
   }
   
   public String getSignature(String toSign, String tokenSecret){
-	  return HMAC.sign(toSign, consumerSecret + '&' + tokenSecret);
+    return HMAC.sign(toSign, URL.percentEncode(consumerSecret) + '&' + URL.percentEncode(tokenSecret));
   }
   
   public String getStringToSign(Request request, CallType type){
