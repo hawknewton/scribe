@@ -40,6 +40,8 @@ public class Scribe {
   private static final String ACCESS_TOKEN_VERB = "access.token.verb";
   private static final String CONSUMER_SECRET = "consumer.secret";
   private static final String CONSUMER_KEY = "consumer.key";
+  private static final String READ_TIMEOUT = "read.timeout";
+  private static final String CONNECT_TIMEOUT = "connect.timeout";
   private static Scribe instance;
   
   private final Properties config;
@@ -85,6 +87,18 @@ public class Scribe {
     return (string == null || string.trim().length() <= 0);
   }
   
+  // Returns the int value for a configuration property
+  // or 0 if no such property was specified.
+  
+  private int getNumericValue(String propertyName) {
+    int result = 0;
+    String value = config.getProperty(propertyName);
+    if(!isEmpty(value)) {
+      result = Integer.parseInt(value);
+    }
+    return result;
+  }
+  
   /**
    * Obtains the request token and token secret.
    * 
@@ -100,9 +114,17 @@ public class Scribe {
   }
   
   private Request getRTRequest() {
-    return new Request(Verb.valueOf(config.getProperty(REQUEST_TOKEN_VERB)), config.getProperty(REQUEST_TOKEN_URL));
+    Request request = new Request(Verb.valueOf(config.getProperty(REQUEST_TOKEN_VERB)), config.getProperty(REQUEST_TOKEN_URL));
+    return assignTimeouts(request);
   }
 
+  private Request assignTimeouts(Request request) {
+    request.setConnectTimeout(getNumericValue(READ_TIMEOUT));
+    request.setReadTimeout(getNumericValue(CONNECT_TIMEOUT));
+    
+    return request;
+  }
+  
   private OAuthSigner getOAuthSigner() {
     return new OAuthSigner(config.getProperty(CONSUMER_KEY),config.getProperty(CONSUMER_SECRET),eq);
   }
@@ -124,7 +146,9 @@ public class Scribe {
   }
 
   private Request getATRequest() {
-    return new Request(Verb.valueOf(config.getProperty(ACCESS_TOKEN_VERB)), config.getProperty(ACCESS_TOKEN_URL));
+    Request request = new Request(Verb.valueOf(config.getProperty(ACCESS_TOKEN_VERB)), config.getProperty(ACCESS_TOKEN_URL));
+    
+    return assignTimeouts(request);
   }
   
   /**

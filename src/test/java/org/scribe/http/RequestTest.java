@@ -17,8 +17,11 @@ package org.scribe.http;
 
 import static org.junit.Assert.*;
 
-import org.junit.*;
-import org.scribe.http.Request.*;
+import java.net.ServerSocket;
+import java.net.SocketTimeoutException;
+
+import org.junit.Test;
+import org.scribe.http.Request.Verb;
 
 public class RequestTest {
 
@@ -62,5 +65,44 @@ public class RequestTest {
     Response response = new Request(Verb.GET, "http://bit.ly/whatsup").send();
     assertEquals(200, response.getCode());
     assertTrue(response.getBody().length() > 0);
+  }
+  
+  // I'm sure there is some reason the two following tests are the worst idea ever.
+  // ...  Maybe it's because if they fail they could potentially tie up the tests
+  // or possibly hang a CI sever.  That being said, I'd rather hang Hudson than my
+  // enterpries application.
+  
+  @Test
+  public void shouldTimeoutOnConnection() throws Exception {
+    // I am making the assumption that 167.16.37.250 doesn't exist in your network.
+    // If it does, this test result in a (possibly) false negative.
+    
+    Request request = new Request(Verb.GET, "http://176.16.37.250");    // Yup, 37 ...  Ever seen Clerks?
+    request.setConnectTimeout(10);
+    
+    try {
+      request.doSend();
+      fail("Hummm... connection timeout test failed.  You might have a strange network topology, check my ramblings in the comments");
+    } catch (SocketTimeoutException e) {
+      // Rad.
+    }
+  }
+  
+  @Test
+  public void shouldTimeoutOnRead() throws Exception {
+    ServerSocket socket = new ServerSocket();
+    socket.bind(null);
+   
+    int localPort = socket.getLocalPort();
+    String localAddress = socket.getInetAddress().getHostAddress();
+    
+    Request request = new Request(Verb.GET, "http://" + localAddress + ":" + localPort);
+    request.setReadTimeout(1000);
+    try {
+      request.doSend();
+      fail("Hummm... timeout test failed.  Check the source, the test is a little ... Strange.");
+    } catch (SocketTimeoutException e) {
+      // Schweet
+    }
   }
 }
