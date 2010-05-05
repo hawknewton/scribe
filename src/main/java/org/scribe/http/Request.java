@@ -32,6 +32,8 @@ public class Request {
   
   private String url;
   private Verb verb;
+  private int readTimeout;
+  private int connectTimeout;
   private Map<String, String> bodyParams;
   private Map<String, String> headers;
   private String payload = null;
@@ -64,6 +66,8 @@ public class Request {
     if(verb.equals(Verb.PUT) || verb.equals(Verb.POST)){
       addBody(connection, getBodyContents());
     }
+    connection.setReadTimeout(readTimeout);
+    connection.setConnectTimeout(connectTimeout);
     return new Response(connection);
   }
   
@@ -177,7 +181,36 @@ public class Request {
   public Map<String, String> getHeaders(){
 	  return headers;
   }
-   
+  
+  
+  /**
+   * Connection timeout, in milliseconds.
+   * 
+   * @return
+   */
+  public int getReadTimeout() {
+    return readTimeout;
+  }
+
+  public void setReadTimeout(int readTimeout) {
+    this.readTimeout = readTimeout;
+  }
+
+  /**
+   * Connection timeout, in milliseconds.
+   * 
+   * @return
+   */
+  public int getConnectTimeout() {
+    return connectTimeout;
+  }
+
+  public void setConnectTimeout(int connectionTimeout) {
+    this.connectTimeout = connectionTimeout;
+  }
+
+
+
   /**
    * An enumeration containing the most common HTTP Verbs.
    * 
