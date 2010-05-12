@@ -2,13 +2,22 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.scribe</groupId>
-  <artifactId>scribe</artifactId>
+  <artifactId>scribe-g</artifactId>
   <packaging>jar</packaging>
-  <version>0.6.6</version>
-  <name>Simple OAuth Library</name>
+  <version>0.6.8</version>
+  <name>Simple OAuth Library +Google support</name>
   <dependencies>
-  
-     <!-- TEST DEPENDENCIES -->
+
+	<!--
+		I've forked the original codebase my fork is here: http://github.com/hawknewton/scribe,
+		original available here: http://github.com/fernandezpablo85/scribe in order to support
+		the google oauth provider and integration timeouts..
+		
+		These changes have been submitted and (mostly) accepted.  Hopefully we can migrate back to the
+		official release soon.
+		
+	 -->  
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -21,12 +30,6 @@
       <artifactId>commons-codec</artifactId>
       <version>1.4</version>
     </dependency>
-    
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <version>1.2.15</version>
-    </dependency>    
   
   </dependencies>
   <build>
